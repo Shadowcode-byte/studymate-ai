@@ -1097,34 +1097,29 @@
     chatEl.scrollTop = chatEl.scrollHeight;
 
     // Call Anthropic API
-    try {
-      const response = await fetch("https://api.anthropic.com/v1/messages", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          model: "claude-sonnet-4-20250514",
-          max_tokens: 1000,
-          system: `You are StudyMate AI, an intelligent study agent for college students. 
-You help B.Tech CSE students by creating study plans, finding resources, and tracking progress.
-You are friendly, encouraging, and specific. When answering, mention realistic actions like:
-- Searching for resources
-- Scheduling calendar events  
-- Tracking progress
-Keep responses concise (2-3 sentences max). Use simple, student-friendly language.`,
-          messages: [{ role: "user", content: text }]
-        })
-      });
-      const data = await response.json();
-      const reply = data.content?.[0]?.text || "I'm on it! Let me build your study plan right away.";
-      
-      document.getElementById('thinking')?.remove();
-      addMessage({ role: 'agent', text: reply });
-    } catch(e) {
-      document.getElementById('thinking')?.remove();
-      const key = Object.keys(agentResponses).find(k => text.toLowerCase().includes(k));
-      const resp = key ? agentResponses[key] : agentResponses.default(text);
-      addMessage({ role: 'agent', ...resp });
-    }
+try {
+  const response = await fetch("https://studymate-ai-production.up.railway.app/api/study", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json"
+    },
+    body: JSON.stringify({
+      goal: text
+    })
+  });
+
+  const data = await response.json();
+  const reply = data.plan || data.message || "Study plan generated!";
+
+  document.getElementById('thinking')?.remove();
+  addMessage({ role: 'agent', text: reply });
+
+} catch(e) {
+  document.getElementById('thinking')?.remove();
+  const key = Object.keys(agentResponses).find(k => text.toLowerCase().includes(k));
+  const resp = key ? agentResponses[key] : agentResponses.default(text);
+  addMessage({ role: 'agent', ...resp });
+}
   }
 
   document.getElementById('user-input').addEventListener('keydown', (e) => {
