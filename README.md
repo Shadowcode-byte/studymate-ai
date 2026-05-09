@@ -184,6 +184,6 @@ MIT License — see [LICENSE](LICENSE) file.
 
 ```
 MIT License
-Copyright (c) 2025 StudyMate AI
+Copyright (c) 2026 StudyMate AI
 Permission is hereby granted, free of charge, to any person obtaining a copy...
 ```
